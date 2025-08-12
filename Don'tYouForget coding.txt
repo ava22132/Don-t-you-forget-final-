@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sober & Strong — Recovery Fundraiser</title>
+  <style>
+    :root{
+      --bg1:#f0f9ff; --bg2:#eef2ff; --card:#ffffff; --accent:#4f46e5; --accent-2:#10b981; --muted:#6b7280; --success:#059669;
+      --soft:#f8fafc; --danger:#ef4444; --warning:#f59e0b;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; padding:24px; background:linear-gradient(135deg,var(--bg1),var(--bg2)); color:#111827;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .container{max-width:1200px; margin:0 auto;}
+    .card{background:var(--card); border-radius:14px; padding:20px; box-shadow:0 6px 20px rgba(15,23,42,0.06);}
+    .hero-card{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;}
+    .success-card{background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:white;}
+    .warning-card{background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:white;}
+    header{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px;}
+    h1{font-size:28px; margin:0; letter-spacing:1px;}
+    .subtitle{opacity:0.9; font-size:16px; margin-top:8px;}
+    .muted{color:var(--muted); font-size:14px}
+    .grid{display:grid; grid-template-columns:1fr; gap:20px; margin-top:20px}
+    @media(min-width:900px){ .grid{grid-template-columns:1fr 1fr} }
+    @media(min-width:1200px){ .grid{grid-template-columns:1fr 1fr 1fr} }
+    .btn{padding:12px 20px; border-radius:10px; border:none; cursor:pointer; font-weight:500; transition:all 0.2s;}
+    .btn-primary{background:var(--accent); color:white;}
+    .btn-success{background:var(--success); color:white;}
+    .btn-secondary{background:white; border:2px solid rgba(255,255,255,0.3); color:inherit;}
+    .btn-danger{background:var(--danger); color:white;}
+    .btn-ghost{background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); color:inherit;}
+    .big-number{font-weight:700; font-size:48px; line-height:1;}
+    .medium-number{font-weight:600; font-size:32px; line-height:1;}
+    .stat-label{font-size:14px; opacity:0.8; margin-top:8px;}
+    .meter{height:16px; background:rgba(255,255,255,0.2); border-radius:99px; overflow:hidden; margin:12px 0;}
+    .meter > i{display:block; height:100%; background:linear-gradient(90deg,#10b981,#059669); transition:width 0.3s;}
+    .milestone{background:rgba(255,255,255,0.1); padding:16px; border-radius:12px; margin:8px 0; border-left:4px solid #fbbf24;}
+    .resource-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-top:16px;}
+    .resource-card{background:white; padding:18px; border-radius:12px; border-left:4px solid var(--accent);}
+    .resource-card h3{margin:0 0 8px 0; font-size:18px; color:var(--accent);}
+    .resource-card p{margin:0 0 12px 0; font-size:14px; line-height:1.5;}
+    .hotline{background:var(--danger); color:white; padding:8px 12px; border-radius:6px; font-weight:600; text-decoration:none; display:inline-block;}
+    .flex{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
+    .text-center{text-align:center;}
+    .hidden{display:none;}
+    .btn:hover{opacity:0.9; transform:translateY(-2px);}
+    .btn:active{transform:translateY(0);}
+    .impact-stat{background:rgba(255,255,255,0.1); padding:20px; border-radius:12px; text-align:center; margin:8px 0;}
+    .emergency-banner{background:var(--danger); color:white; padding:16px; border-radius:12px; margin-bottom:20px; text-align:center;}
+    .progress-ring{width:120px; height:120px; margin:0 auto;}
+    .progress-ring circle{fill:none; stroke-width:8;}
+    .progress-ring .bg{stroke:rgba(255,255,255,0.2);}
+    .progress-ring .progress{stroke:#fbbf24; stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 0.3s;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Emergency Banner -->
+    <div class="emergency-banner">
+      <strong>🚨 Need Help Now?</strong> Call 988 (Suicide & Crisis Lifeline) or 1-800-662-4357 (SAMHSA Helpline) • Available 24/7
+    </div>
+
+    <!-- Header -->
+    <div class="card hero-card">
+      <header>
+        <div>
+          <h1>🌟 Sober & Strong</h1>
+          <div class="subtitle">Track your sobriety journey while raising funds for teen recovery housing</div>
+        </div>
+        <div class="flex">
+          <button class="btn btn-secondary" onclick="exportData()">Export Journey</button>
+          <button class="btn btn-ghost" onclick="showShareModal()">Share Progress</button>
+        </div>
+      </header>
+
+      <!-- Main Sobriety Counter -->
+      <div style="text-align:center; margin:20px 0;">
+        <div class="progress-ring">
+          <svg width="120" height="120">
+            <circle class="bg" cx="60" cy="60" r="52"></circle>
+            <circle class="progress" cx="60" cy="60" r="52" id="sobrietyRing" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+          </svg>
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); margin-top:-60px;">
+            <div class="big-number" id="daysSober">0</div>
+            <div class="stat-label">Days Sober</div>
+          </div>
+        </div>
+        
+        <div style="margin-top:30px;">
+          <button class="btn btn-success" onclick="markSoberDay()" style="font-size:18px; padding:16px 32px;">
+            ✅ Mark Today Sober
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid">
+      <!-- Fundraising Impact -->
+      <div class="card success-card">
+        <h2 style="margin:0 0 20px 0; font-size:22px;">💝 Fundraising Impact</h2>
+        
+        <div class="impact-stat">
+          <div class="medium-number" id="moneyRaised">$0</div>
+          <div class="stat-label">Total Raised</div>
+        </div>
+        
+        <div class="impact-stat">
+          <div class="medium-number" id="teensHelped">0</div>
+          <div class="stat-label">Teens Supported</div>
+        </div>
+
+        <div style="margin:20px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span>Daily Pledge: $<span id="dailyPledge">5</span></span>
+            <input type="range" min="1" max="100" value="5" id="pledgeSlider" onchange="updatePledge()" style="width:120px;">
+          </div>
+          <div style="font-size:13px; opacity:0.8;">Every sober day = $<span id="pledgeAmount">5</span> towards recovery housing</div>
+        </div>
+
+        <div class="meter">
+          <i id="fundingProgress" style="width:0%;"></i>
+        </div>
+        <div style="font-size:13px; opacity:0.8; text-align:center;">Progress toward $25,000 housing goal</div>
+      </div>
+
+      <!-- Milestones & Achievements -->
+      <div class="card">
+        <h2 style="margin:0 0 20px 0; font-size:22px;">🏆 Milestones</h2>
+        
+        <div id="currentMilestone" class="milestone">
+          <strong>🎯 Next Goal: 7 Days</strong><br>
+          <span style="font-size:13px; opacity:0.8;">One week of sobriety - You've got this!</span>
+        </div>
+
+        <div style="margin:20px 0;">
+          <h3 style="margin:0 0 12px 0; font-size:16px;">🌟 Your Achievements</h3>
+          <div id="achievementsList">
+            <div style="color:var(--muted); font-style:italic; font-size:14px;">Start your journey to unlock achievements!</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <h3 style="margin:0 0 12px 0; font-size:16px;">📊 Journey Stats</h3>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div style="background:var(--soft); padding:12px; border-radius:8px; text-align:center;">
+              <div style="font-weight:600; font-size:20px;" id="longestStreak">0</div>
+              <div style="font-size:12px; color:var(--muted);">Longest Streak</div>
+            </div>
+            <div style="background:var(--soft); padding:12px; border-radius:8px; text-align:center;">
+              <div style="font-weight:600; font-size:20px;" id="totalResets">0</div>
+              <div style="font-size:12px; color:var(--muted);">Fresh Starts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <h2 style="margin:0 0 20px 0; font-size:22px;">⚡ Quick Actions</h2>
+        
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <button class="btn btn-primary" onclick="shareSobrietyProgress()">
+            📢 Share My Journey
+          </button>
+          <button class="btn btn-secondary" onclick="viewProgress()">
+            📈 View Progress Chart
+          </button>
+          <button class="btn btn-secondary" onclick="findSupport()">
+            🤝 Find Local Support
+          </button>
+          <button class="btn btn-danger" onclick="resetSobriety()" style="margin-top:8px;">
+            🔄 Reset Counter
+          </button>
+        </div>
+
+        <div style="margin-top:24px; padding:16px; background:var(--soft); border-radius:10px;">
+          <h3 style="margin:0 0 8px 0; font-size:14px; color:var(--accent);">💡 Daily Reminder</h3>
+          <p style="margin:0; font-size:13px; line-height:1.4;" id="dailyReminder">
+            Every day of sobriety is a victory. You're not just changing your life - you're helping save young lives too.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recovery Housing Impact -->
+    <div class="card" style="margin-top:20px;">
+      <h2 style="margin:0 0 16px 0; font-size:24px; text-align:center;">🏠 Supporting Teen Recovery Housing</h2>
+      <p style="text-align:center; color:var(--muted); margin-bottom:24px;">Your sobriety journey directly funds safe housing for adolescents struggling with alcohol addiction</p>
+      
+      <div class="resource-grid">
+        <div class="resource-card" style="border-left-color: #10b981;">
+          <h3>🏡 Safe Housing</h3>
+          <p>Providing secure, supportive living environments where teens can focus on recovery without the pressures of unsafe home situations or peer pressure.</p>
+          <div style="font-size:13px; color:var(--success); font-weight:600;">$2,000 = 1 month of housing support</div>
+        </div>
+        <div class="resource-card" style="border-left-color: #8b5cf6;">
+          <h3>👥 Peer Support</h3>
+          <p>Creating communities where young people in recovery can support each other through shared experiences, group therapy, and mutual encouragement.</p>
+          <div style="font-size:13px; color:#8b5cf6; font-weight:600;">24/7 peer counselor availability</div>
+        </div>
+        <div class="resource-card" style="border-left-color: #f59e0b;">
+          <h3>📚 Life Skills</h3>
+          <p>Teaching essential life skills, job training, educational support, and financial literacy to help teens build independent, substance-free futures.</p>
+          <div style="font-size:13px; color:var(--warning); font-weight:600;">95% graduation rate to independence</div>
+        </div>
+        <div class="resource-card" style="border-left-color: #ef4444;">
+          <h3>💝 Your Impact</h3>
+          <p>Every dollar raised provides meals, counseling, education, and hope. Your personal recovery journey becomes a beacon of hope for struggling teens.</p>
+          <div style="font-size:13px; color:var(--danger); font-weight:600;">1 life saved = priceless</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crisis Resources -->
+    <div class="card warning-card" style="margin-top:20px;">
+      <h2 style="margin:0 0 16px 0; font-size:22px;">🆘 Crisis Resources & Support</h2>
+      <div class="resource-grid">
+        <div style="background:rgba(255,255,255,0.1); padding:16px; border-radius:10px;">
+          <h3 style="margin:0 0 8px 0; color:white;">24/7 Crisis Hotlines</h3>
+          <div style="margin:8px 0;">
+            <a href="tel:988" class="hotline">988 - Crisis Lifeline</a>
+          </div>
+          <div style="margin:8px 0;">
+            <a href="tel:18006624357" class="hotline">1-800-662-4357 - SAMHSA</a>
+          </div>
+          <div style="margin:8px 0;">
+            <a href="tel:18003662465" class="hotline">1-800-366-2465 - Teen Helpline</a>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); padding:16px; border-radius:10px;">
+          <h3 style="margin:0 0 8px 0; color:white;">Online Support</h3>
+          <p style="margin:0; font-size:14px; line-height:1.4;">
+            • AA Online Meetings<br>
+            • SMART Recovery<br>
+            • Teen Recovery Forums<br>
+            • Crisis Text Line: Text HOME to 741741
+          </p>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); padding:16px; border-radius:10px;">
+          <h3 style="margin:0 0 8px 0; color:white;">Local Resources</h3>
+          <p style="margin:0; font-size:14px; line-height:1.4;">
+            • Find local AA/NA meetings<br>
+            • Teen recovery centers<br>
+            • Family support groups<br>
+            • Counseling services
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center;">
+      <div class="card" style="max-width:500px; margin:20px;">
+        <h3 style="margin:0 0 16px 0;">Share Your Sobriety Journey</h3>
+        <div style="background:#f3f4f6; padding:16px; border-radius:8px; font-size:14px; line-height:1.5; margin-bottom:16px;" id="shareText">
+          🌟 Day [X] of my sobriety journey! I've raised $[Y] for teen recovery housing through Sober & Strong. Every day sober helps save young lives. Join me in making a difference! #SobrietyJourney #RecoverySupport #TeenRecovery
+        </div>
+        <div style="display:flex; gap:12px;">
+          <button class="btn btn-primary" onclick="copyShareText()">Copy Text</button>
+          <button class="btn btn-secondary" onclick="hideShareModal()">Close</button>
+        </div>
+        <div id="copyMessage" class="hidden" style="margin-top:12px; padding:12px; background:#d1fae5; border-radius:8px; color:#065f46;">
+          Text copied to clipboard! Share your inspiring journey anywhere.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Data storage
+    let sobrietyData = JSON.parse(localStorage.getItem('sobrietyData')) || {
+      daysSober: 0,
+      startDate: null,
+      dailyPledge: 5,
+      totalRaised: 0,
+      lastMarkedDate: null,
+      longestStreak: 0,
+      totalResets: 0,
+      achievements: [],
+      soberDates: []
+    };
+
+    const milestones = [
+      { days: 1, title: "First Day Victory", message: "You took the first step - that's the hardest one!" },
+      { days: 3, title: "Three Day Warrior", message: "72 hours of strength and determination!" },
+      { days: 7, title: "One Week Strong", message: "A full week of sobriety - incredible progress!" },
+      { days: 14, title: "Two Week Champion", message: "Two weeks of choosing recovery every day!" },
+      { days: 30, title: "One Month Milestone", message: "30 days of sobriety - you're building new habits!" },
+      { days: 60, title: "Two Month Hero", message: "60 days strong - your brain is healing!" },
+      { days: 90, title: "Three Month Legend", message: "90 days - you've proven your commitment!" },
+      { days: 180, title: "Six Month Inspiration", message: "Half a year sober - you're inspiring others!" },
+      { days: 365, title: "One Year Miracle", message: "365 days of sobriety - you've transformed your life!" }
+    ];
+
+    const dailyReminders = [
+      "Every day of sobriety is a victory. You're not just changing your life - you're helping save young lives too.",
+      "Your recovery journey is funding hope for teenagers who need it most. Keep going!",
+      "Today's sobriety choice ripples out to help teens find safe housing and support.",
+      "You're proving that recovery is possible. Your example gives hope to struggling youth.",
+      "Each sober day is an investment in your future and a teen's chance at recovery.",
+      "Your strength today helps build tomorrow's recovery houses for young people in need.",
+      "Recovery is a daily choice. Thank you for choosing hope - for yourself and for teens everywhere."
+    ];
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDisplay();
+      updateDailyReminder();
+      document.getElementById('pledgeSlider').value = sobrietyData.dailyPledge;
+      updatePledge();
+    });
+
+    function markSoberDay() {
+      const today = new Date().toDateString();
+      
+      if (sobrietyData.lastMarkedDate === today) {
+        showNotification('You\'ve already marked today as sober! Keep going strong! 💪', 'success');
+        return;
+      }
+
+      if (!sobrietyData.startDate) {
+        sobrietyData.startDate = new Date().toISOString();
+      }
+
+      sobrietyData.daysSober += 1;
+      sobrietyData.totalRaised += sobrietyData.dailyPledge;
+      sobrietyData.lastMarkedDate = today;
+      sobrietyData.soberDates.push(today);
+      sobrietyData.longestStreak = Math.max(sobrietyData.longestStreak, sobrietyData.daysSober);
+      
+      checkMilestones();
+      saveData();
+      updateDisplay();
+      
+      // Show simple success message instead of share popup
+      showNotification(`🎉 Day ${sobrietyData.daysSober} marked! You've raised $${sobrietyData.totalRaised} total for teen recovery housing!`, 'success');
+    }
+
+    function resetSobriety() {
+      if (confirm('Are you sure you want to reset your sobriety counter? Remember, recovery is a journey with ups and downs. This is a fresh start, not a failure.')) {
+        sobrietyData.daysSober = 0;
+        sobrietyData.startDate = new Date().toISOString();
+        sobrietyData.lastMarkedDate = null;
+        sobrietyData.totalResets += 1;
+        
+        saveData();
+        updateDisplay();
+        
+        showNotification('Counter reset. Remember, recovery is a journey, not a destination. You\'ve got this! 🌟 Every fresh start is a new opportunity.', 'info');
+      }
+    }
+
+    function updatePledge() {
+      const value = document.getElementById('pledgeSlider').value;
+      sobrietyData.dailyPledge = parseInt(value);
+      document.getElementById('dailyPledge').textContent = value;
+      document.getElementById('pledgeAmount').textContent = value;
+      saveData();
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      document.getElementById('daysSober').textContent = sobrietyData.daysSober;
+      document.getElementById('moneyRaised').textContent = '$' + sobrietyData.totalRaised.toLocaleString();
+      document.getElementById('longestStreak').textContent = sobrietyData.longestStreak;
+      document.getElementById('totalResets').textContent = sobrietyData.totalResets;
+      
+      // Calculate teens helped (assuming $2000 per teen for housing support)
+      const teensHelped = Math.floor(sobrietyData.totalRaised / 2000);
+      document.getElementById('teensHelped').textContent = teensHelped;
+      
+      // Update funding progress (goal: $25,000)
+      const progressPercent = Math.min((sobrietyData.totalRaised / 25000) * 100, 100);
+      document.getElementById('fundingProgress').style.width = progressPercent + '%';
+      
+      // Update progress ring (based on next milestone)
+      updateProgressRing();
+      updateCurrentMilestone();
+      updateAchievements();
+    }
+
+    function updateProgressRing() {
+      const nextMilestone = milestones.find(m => m.days > sobrietyData.daysSober) || milestones[milestones.length - 1];
+      const progress = Math.min(sobrietyData.daysSober / nextMilestone.days, 1);
+      const circumference = 326.73;
+      const offset = circumference - (progress * circumference);
+      document.getElementById('sobrietyRing').style.strokeDashoffset = offset;
+    }
+
+    function updateCurrentMilestone() {
+      const nextMilestone = milestones.find(m => m.days > sobrietyData.daysSober);
+      if (nextMilestone) {
+        const daysLeft = nextMilestone.days - sobrietyData.daysSober;
+        document.getElementById('currentMilestone').innerHTML = `
+          <strong>🎯 Next Goal: ${nextMilestone.days} Days</strong><br>
+          <span style="font-size:13px; opacity:0.8;">${daysLeft} days to go - ${nextMilestone.message}</span>
+        `;
+      } else {
+        document.getElementById('currentMilestone').innerHTML = `
+          <strong>🏆 Milestone Master!</strong><br>
+          <span style="font-size:13px; opacity:0.8;">You've achieved all major milestones - keep going strong!</span>
+        `;
+      }
+    }
+
+    function updateAchievements() {
+      const container = document.getElementById('achievementsList');
+      if (sobrietyData.achievements.length === 0) {
+        container.innerHTML = '<div style="color:var(--muted); font-style:italic; font-size:14px;">Start your journey to unlock achievements!</div>';
+        return;
+      }
+
+      let html = '';
+      sobrietyData.achievements.slice(-3).reverse().forEach(achievement => {
+        html += `
+          <div style="background:var(--soft); padding:12px; border-radius:8px; margin:4px 0; border-left:4px solid var(--success);">
+            <strong>${achievement.title}</strong><br>
+            <span style="font-size:12px; color:var(--muted);">${achievement.message}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function checkMilestones() {
+      const newMilestones = milestones.filter(m => 
+        m.days === sobrietyData.daysSober && 
+        !sobrietyData.achievements.some(a => a.days === m.days)
+      );
+
+      newMilestones.forEach(milestone => {
+        sobrietyData.achievements.push({
+          ...milestone,
+          achievedDate: new Date().toISOString()
+        });
+        showNotification(`🎉 MILESTONE ACHIEVED! ${milestone.title} - ${milestone.message}`, 'success');
+      });
+    }
+
+
+
+    function showNotification(message, type = 'info') {
+      const colors = {
+        success: 'linear-gradient(135deg, #10b981, #059669)',
+        info: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+        warning: 'linear-gradient(135deg, #f59e0b, #d97706)'
+      };
+
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 1001;
+        background: ${colors[type]};
+        color: white; padding: 16px 20px; border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        max-width: 350px; font-size: 14px; line-height: 1.4;
+        animation: slideIn 0.3s ease-out;
+      `;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-in';
+        setTimeout(() => notification.remove(), 300);
+      }, 5000);
+    }
+
+    function updateDailyReminder() {
+      const reminder = dailyReminders[Math.floor(Math.random() * dailyReminders.length)];
+      document.getElementById('dailyReminder').textContent = reminder;
+    }
+
+    function shareSobrietyProgress() {
+      const teensHelped = Math.floor(sobrietyData.totalRaised / 2000);
+      const shareText = `🌟 Day ${sobrietyData.daysSober} of my sobriety journey! I've raised $${sobrietyData.totalRaised} for adolescent recovery housing, helping ${teensHelped} teens get the support they need. Every day of sobriety makes a difference! #SobrietyJourney #RecoverySupport #TeenRecovery #MakingADifference`;
+      
+      navigator.clipboard.writeText(shareText).then(() => {
+        showNotification('Sobriety progress copied to clipboard! Share your inspiring journey! 🌟', 'success');
+      });
+    }
+
+    function showShareModal() {
+      const teensHelped = Math.floor(sobrietyData.totalRaised / 2000);
+      const shareText = `🌟 Day ${sobrietyData.daysSober} of my sobriety journey! I've raised $${sobrietyData.totalRaised} for teen recovery housing through Sober & Strong. Every day sober helps save young lives. Join me in making a difference! #SobrietyJourney #RecoverySupport #TeenRecovery`;
+      
+      document.getElementById('shareText').textContent = shareText;
+      document.getElementById('shareModal').classList.remove('hidden');
+    }
+
+    function hideShareModal() {
+      document.getElementById('shareModal').classList.add('hidden');
+      document.getElementById('copyMessage').classList.add('hidden');
+    }
+
+    function copyShareText() {
+      const text = document.getElementById('shareText').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        document.getElementById('copyMessage').classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('copyMessage').classList.add('hidden');
+        }, 3000);
+      });
+    }
+
+    function viewProgress() {
+      showNotification('Progress chart feature coming soon! For now, check your milestones and achievements above.', 'info');
+    }
+
+    function findSupport() {
+      showNotification('Opening local support resources... Check the Crisis Resources section below for immediate help.', 'info');
+    }
+
+    function exportData() {
+      const data = {
+        sobrietyData: sobrietyData,
+        exportDate: new Date().toISOString(),
+        summary: {
+          daysSober: sobrietyData.daysSober,
+          totalRaised: sobrietyData.totalRaised,
+          teensHelped: Math.floor(sobrietyData.totalRaised / 2000),
+          achievements: sobrietyData.achievements.length
+        }
+      };
+      
+      const dataStr = JSON.stringify(data, null, 2);
+      const dataBlob = new Blob([dataStr], {type: 'application/json'});
+      const url = URL.createObjectURL(dataBlob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'sober-strong-journey.json';
+      link.click();
+      
+      URL.revokeObjectURL(url);
+      showNotification('Journey data exported successfully! 📊', 'success');
+    }
+
+    function saveData() {
+      localStorage.setItem('sobrietyData', JSON.stringify(sobrietyData));
+    }
+
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Update daily reminder every hour
+    setInterval(updateDailyReminder, 3600000);
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96df5906749dd734',t:'MTc1NDk5NTE1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
